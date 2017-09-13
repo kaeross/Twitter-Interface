@@ -1,0 +1,22 @@
+{
+  "name": "twitter-interface",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaeross/Twitter-Interface.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaeross/Twitter-Interface/issues"
+  },
+  "homepage": "https://github.com/kaeross/Twitter-Interface#readme",
+  "devDependencies": {
+    "express": "^4.15.4"
+  }
+}
