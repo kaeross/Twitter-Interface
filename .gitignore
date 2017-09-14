@@ -1,5 +1,7 @@
 .DS_Store
 .sass-cache
 
-#ignore node modules
+#ignore directories
 /node_modules/
+/css/
+/images/

@@ -1,0 +1,31 @@
+.grid-33
+        .app--section
+            ul.app--message--list
+                li
+                    h3
+                        | Conversation with 
+                        a Jill Spore
+                    ul.app--message--conversation
+                        mixin appMessage(who, text, timestamp)
+                            mixin paras
+                                p.app--message--text= text
+                                p.app--message--timestamp= timestamp
+
+                            if who === 'me'
+                                li.app--message--me
+                                    .app--avatar(style='background-image: url(static/images/m-spore.png)')
+                                        img(src='static/images/m-spore.png')
+                                    +paras
+                            else
+                                li.app--message
+                                    .app--avatar(style='background-image: url(static/images/f-spore.png)')
+                                        img(src='static/images/f-spore.png')
+                                    +paras
+
+                                
+
+                        +appMessage('user', 'How are things?', '3 hours ago')
+                        +appMessage('me', 'Great! How about you? Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', '2 hours ago')
+                        +appMessage('user', 'Fantastic! You wanna grab lunch?', '2 hours ago')
+                        +appMessage('me', 'Totes mcgotes. How about Mackey\'s?', '1 hour ago')
+                        +appMessage('user', 'Aww yeah.. I\'m craving a Triple Quarter Mack!', '1 hour ago')
