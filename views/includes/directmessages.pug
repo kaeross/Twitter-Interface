@@ -13,8 +13,8 @@
 
                             if who === 'me'
                                 li.app--message--me
-                                    .app--avatar(style='background-image: url(static/images/m-spore.png)')
-                                        img(src='static/images/m-spore.png')
+                                    .app--avatar(style=`background-image: url(${userInfo.profilePic})`)
+                                        img(src= userInfo.profilePic)
                                     +paras
                             else
                                 li.app--message

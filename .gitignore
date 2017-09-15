@@ -6,3 +6,4 @@
 
 #ignore files
 config.js
+.eslintrc.json
