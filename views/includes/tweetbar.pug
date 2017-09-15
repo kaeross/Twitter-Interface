@@ -2,8 +2,8 @@
     form
         .circle--fluid
         .circle--fluid--cell.circle--fluid--primary.align-bottom.app--tweet--post
-            .app--avatar(style='background-image: url(static/images/m-spore.png)')
-                img(src='static/images/m-spore.png')
+            .app--avatar(style=`background-image: url(${userInfo.profilePic})`)
+                img(src= `${userInfo.profilePic}`)
             textarea#tweet-textarea.circle--textarea--input(placeholder="What's happening?")
             strong#tweet-char.app--tweet--char 140
         .circle--fluid--cell.align-bottom

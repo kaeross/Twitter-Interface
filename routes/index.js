@@ -1,3 +1,7 @@
+/****************************************************************
+ * Required modules
+ ***************************************************************/
+
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -5,21 +9,36 @@ const router = express.Router();
 const oAuth = require('../config.js');
 const Twit = require('twit');
 const moment = require('moment');
+
+/****************************************************************
+ * Global variables
+ ***************************************************************/
+
 var userData;
 var timelineData;
-var userInfo = {
-    username: '',
-    profilePic: '',
-    backgroundImg: ''
-};
+var userInfo = {};
 var tweetInfo = {};
 
 const T = new Twit(oAuth);
 app.use(cookieParser());
 
-/**
- * Timeline
- */
+/****************************************************************
+ * General functions
+ ***************************************************************/
+
+// Get user information
+const getUserData = T.get('https://api.twitter.com/1.1/account/verify_credentials.json', (err, data, res) => {
+    userData = data;
+});
+getUserData.done(() => {
+    userInfo.username = userData.screen_name;
+    userInfo.profilePic = userData.profile_image_url;
+    userInfo.backgroundImg = userData.profile_background_image_url;
+});
+
+/****************************************************************
+ * Timeline functions
+ ***************************************************************/
 
 //Get home timeline and display 5 tweets
 const getTimelineData = T.get('https://api.twitter.com/1.1/statuses/home_timeline.json?count=5&exclude_replies', (err, data, res) => {
@@ -47,7 +66,7 @@ getTimelineData.done(() => {
     //get relevent tweet data only and store in tweet object
     console.log(parseTwitterDate(timelineData[0].created_at));
     //parse twitter date to show how long ago
-    for (let i = 0; i < timelineData.length; i+=1) {
+    for (let i = 0; i < timelineData.length; i += 1) {
         tweetInfo[i] = {
             name: timelineData[i].user.name,
             userName: timelineData[i].user.screen_name,
@@ -59,27 +78,17 @@ getTimelineData.done(() => {
     console.log(tweetInfo);
 });
 
-
-/**
- * Direct messages
- */
-
-// Get user information
-const getUserData = T.get('https://api.twitter.com/1.1/account/verify_credentials.json', (err, data, res) => {
-    userData = data;
-});
-getUserData.done(() => {
-    userInfo.username = userData.screen_name;
-    userInfo.profilePic = userData.profile_image_url;
-    userInfo.backgroundImg = userData.profile_background_image_url;
-});
+/****************************************************************
+ * Following functions
+ ***************************************************************/
 
 
-/**
- * Following
- */
+/****************************************************************
+ * Direct messages functions
+ ***************************************************************/
 
-//get  
+
+
 
 
 router.get('/', (req, res) => {
