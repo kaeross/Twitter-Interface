@@ -36,6 +36,7 @@ getUserData.done(() => {
     userInfo.username = userData.screen_name;
     userInfo.profilePic = userData.profile_image_url;
     userInfo.backgroundImg = userData.profile_background_image_url;
+    userInfo.friendsCount = userData.friends_count;
 });
 
 /****************************************************************
@@ -75,7 +76,7 @@ getTimelineData.done(() => {
             timePosted: parseTwitterDate(timelineData[i].created_at)
             // Number of retweets
             // Likes
-        }
+        };
     }
 });
 
@@ -92,7 +93,7 @@ getFriendsData.done(() => {
             userName : friendData[i].screen_name,
             following : friendData[i].following,
             profilePic : friendData[i].profile_image_url,
-        }
+        };
     }
 });
 

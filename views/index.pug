@@ -11,7 +11,7 @@ include includes/tweetbar.pug
                     h2= heading
         
         +appSectionHeader('Timeline')
-        +appSectionHeader('Following', 129)
+        +appSectionHeader('Following', userInfo.friendsCount)
         +appSectionHeader('Direct Messages')  
             
     include includes/timeline.pug
