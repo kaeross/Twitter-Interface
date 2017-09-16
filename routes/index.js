@@ -73,11 +73,12 @@ getTimelineData.done(() => {
             userName: timelineData[i].user.screen_name,
             profilePic: timelineData[i].user.profile_image_url,
             text: timelineData[i].text,
-            timePosted: parseTwitterDate(timelineData[i].created_at)
-            // Number of retweets
-            // Likes
+            timePosted: parseTwitterDate(timelineData[i].created_at),
+            retweetCount: timelineData[i].retweet_count,
+            favouriteCount: timelineData[i].favorite_count
         };
     }
+    console.log(tweetInfo);
 });
 
 /****************************************************************
