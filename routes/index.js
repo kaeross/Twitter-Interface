@@ -14,10 +14,12 @@ const moment = require('moment');
  * Global variables
  ***************************************************************/
 
-var userData;
-var timelineData;
-var userInfo = {};
-var tweetInfo = {};
+let userData;
+let timelineData;
+let friendData;
+const userInfo = {};
+const tweetInfo = {};
+const friendInfo = {};
 
 const T = new Twit(oAuth);
 app.use(cookieParser());
@@ -63,9 +65,7 @@ getTimelineData.done(() => {
         if (diff <= 777600) { return '1w'; }
         return 'on ' + system_date;
     }
-    //get relevent tweet data only and store in tweet object
-    console.log(parseTwitterDate(timelineData[0].created_at));
-    //parse twitter date to show how long ago
+    //get relevent tweet data for 5 tweets only and store in tweetInfo object
     for (let i = 0; i < timelineData.length; i += 1) {
         tweetInfo[i] = {
             name: timelineData[i].user.name,
@@ -73,15 +73,28 @@ getTimelineData.done(() => {
             profilePic: timelineData[i].user.profile_image_url,
             text: timelineData[i].text,
             timePosted: parseTwitterDate(timelineData[i].created_at)
+            // Number of retweets
+            // Likes
         }
     }
-    console.log(tweetInfo);
 });
 
 /****************************************************************
  * Following functions
  ***************************************************************/
-
+const getFriendsData = T.get('https://api.twitter.com/1.1/friends/list.json?count=5', (err, data, res) => {
+    friendData = data.users;
+});
+getFriendsData.done(() => {
+    for (let i = 0; i < friendData.length; i += 1) {
+        friendInfo[i] = {
+            name : friendData[i].name,
+            userName : friendData[i].screen_name,
+            following : friendData[i].following,
+            profilePic : friendData[i].profile_image_url,
+        }
+    }
+});
 
 /****************************************************************
  * Direct messages functions
@@ -92,8 +105,7 @@ getTimelineData.done(() => {
 
 
 router.get('/', (req, res) => {
-    console.log('this is' + userInfo.username);
-    res.render('index', { userInfo, tweetInfo });
+    res.render('index', { userInfo, tweetInfo, friendInfo });
 });
 
 

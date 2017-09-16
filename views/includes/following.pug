@@ -1,23 +1,24 @@
 .grid-33
         .app--section
             ul.app--user--list
-                mixin appUserList(avatar, img, name, userName, buttonText)
+                mixin appUserList(index)
                     li
                         .circle--fluid
                             .circle--fluid--cell.circle--fluid--primary
                                 a.app--tweet--author
-                                    .app--avatar(style= avatar)
-                                        img(src= img)
-                                    h4= name
-                                    p= userName
+                                    .app--avatar(style=`background-image: url(${friendInfo[index].profilePic})`)
+                                        img(src= friendInfo[index].profilePic)
+                                    h4= friendInfo[index].name
+                                    p= friendInfo[index].userName
                             .circle--fluid--cell
-                            if buttonText === 'Unfollow'
-                                a.button.button-text= buttonText
+                            if friendInfo[index].following === true
+                                a.button.button-text Unfollow
                             else
-                                a.button= buttonText
+                                a.button Follow
                 
-                +appUserList('background-image: url(static/images/f-spore.png)', 'static/images/f-spore.png', 'Jill Spore', '@jillspore', 'Unfollow')
-                +appUserList('background-image: url(static/images/f-spore.png)', 'static/images/f-spore.png', 'Jill Spore', '@jillspore', 'Unfollow')
-                +appUserList('background-image: url(static/images/f-spore.png)', 'static/images/f-spore.png', 'Jill Spore', '@jillspore', 'Unfollow')
-                +appUserList('background-image: url(static/images/f-spore.png)', 'static/images/f-spore.png', 'Jill Spore', '@jillspore', 'Follow')
-                +appUserList('background-image: url(static/images/f-spore.png)', 'static/images/f-spore.png', 'Jill Spore', '@jillspore', 'Unfollow')
+                +appUserList(0)
+                +appUserList(1)
+                +appUserList(2)
+                +appUserList(3)
+                +appUserList(4)
+                
