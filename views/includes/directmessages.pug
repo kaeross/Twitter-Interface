@@ -4,28 +4,29 @@
                 li
                     h3
                         | Conversation with 
-                        a Jill Spore
+                        a= DMInfo[0].name
                     ul.app--message--conversation
-                        mixin appMessage(who, text, timestamp)
+                        mixin appMessage(i)
                             mixin paras
-                                p.app--message--text= text
-                                p.app--message--timestamp= timestamp
+                                p.app--message--text= DMInfo[i].text
+                                p.app--message--timestamp= DMInfo[i].timePosted
 
-                            if who === 'me'
+                            if DMInfo[i].id === userInfo.id
                                 li.app--message--me
                                     .app--avatar(style=`background-image: url(${userInfo.profilePic})`)
                                         img(src= userInfo.profilePic)
                                     +paras
                             else
                                 li.app--message
-                                    .app--avatar(style='background-image: url(static/images/f-spore.png)')
-                                        img(src='static/images/f-spore.png')
+                                    .app--avatar(style=`background-image: url(${DMInfo[i].profilePic})`)
+                                        img(src= DMInfo[i].profilePic)
                                     +paras
 
                                 
 
-                        +appMessage('user', 'How are things?', '3 hours ago')
-                        +appMessage('me', 'Great! How about you? Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', '2 hours ago')
-                        +appMessage('user', 'Fantastic! You wanna grab lunch?', '2 hours ago')
-                        +appMessage('me', 'Totes mcgotes. How about Mackey\'s?', '1 hour ago')
-                        +appMessage('user', 'Aww yeah.. I\'m craving a Triple Quarter Mack!', '1 hour ago')
+                        +appMessage(0)
+                        +appMessage(1)
+                        +appMessage(2)
+                        +appMessage(3)
+                        +appMessage(4)
+                        

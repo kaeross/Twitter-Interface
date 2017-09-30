@@ -17,36 +17,102 @@ const moment = require('moment');
 let userData;
 let timelineData;
 let friendData;
-let DMData;
+let dmRecievedData;
+let dmSentData;
 const userInfo = {};
 const tweetInfo = {};
 const friendInfo = {};
-const DMInfo = {};
-
+const DMRInfo = {};
+const DMSInfo = {};
+const DMArray = [];
 const T = new Twit(oAuth);
-app.use(cookieParser());
+
+/****************************************************************
+ * Prototypes
+ ***************************************************************/
+// function DM(text, name, userName, id, date, timePosted, profilePic, recipient) {
+//     this.text = text;
+//     this.name = name;
+//     this.userName = userName;
+//     this.id = id;
+//     this.date = date;
+//     this.timePosted = parseTwitterDate(timePosted, 'long');
+//     this.profilePic = profilePic;
+//     this.recipient = recipient;
+// }
+
+function DM(dataSource) {
+    this.text = dataSource.text;
+    this.name = dataSource.sender.name;
+    this.userName = dataSource.sender.screen_name;
+    this.id = dataSource.sender_id;
+    this.date = dataSource.sender.created_at;
+    this.timePosted = parseTwitterDate(dataSource.sender.created_at, 'long');
+    this.profilePic = dataSource.sender.profile_image_url;
+    this.recipient = dataSource.recipient.id;
+}
+
+DM.prototype.add = function() {
+    DMArray.push(this);
+}
 
 /****************************************************************
  * General functions
  ***************************************************************/
 
 //Function to format twitter timestamp
-function parseTwitterDate(tDate) {
+//shortOrLong - use param 'short' for mobile friendly shortened version or 'long' for extended version
+function parseTwitterDate(tDate, shortOrLong) {
     //use moment package to parse twitter date
-    const system_date = moment(tDate, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en');
-    const user_date = new Date();
-    //format dateTime
-    var diff = Math.floor((user_date - system_date) / 1000);
-    if (diff <= 1) { return 'just now'; }
-    if (diff < 60) { return diff + 's'; }
-    if (diff <= 90) { return '1m'; }
-    if (diff <= 3540) { return Math.round(diff / 60) + 'm'; }
-    if (diff <= 5400) { return '1 hour ago'; }
-    if (diff <= 86400) { return Math.round(diff / 3600) + 'h'; }
-    if (diff <= 129600) { return '1 day ago'; }
-    if (diff < 604800) { return Math.round(diff / 86400) + 'd'; }
-    if (diff <= 777600) { return '1w'; }
-    return 'on ' + system_date;
+    const date = moment(tDate, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en');
+    const seconds = Math.floor((new Date() - date) / 1000);
+
+    let interval = Math.floor(seconds / 31536000);
+    if (interval > 1) {
+        if (shortOrLong === 'long') {
+            return interval + ' years ago';
+        } else {
+            return interval + 'y';
+        }
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        if (shortOrLong === 'long') {
+            return interval + ' months ago';
+        } else {
+            return interval + 'm';
+        }
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        if (shortOrLong === 'long') {
+            return interval + ' days ago';
+        } else {
+            return interval + 'd';
+        }
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        if (shortOrLong === 'long') {
+            return interval + ' hours ago';
+        } else {
+            return interval + 'h';
+        }
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        if (shortOrLong === 'long') {
+            return interval + ' minutes ago';
+        } else {
+            return interval + 'm';
+        }
+    }
+    if (shortOrLong === 'long') {
+        return interval + ' seconds ago';
+    } else {
+        return interval + 's';
+    }
+
 }
 
 // Get user information and verify oAuth credentials
@@ -63,6 +129,7 @@ getUserData.done(() => {
     userInfo.profilePic = userData.profile_image_url;
     userInfo.backgroundImg = userData.profile_background_image_url;
     userInfo.friendsCount = userData.friends_count;
+    userInfo.id = userData.id;
 });
 
 /****************************************************************
@@ -82,7 +149,7 @@ getTimelineData.done(() => {
             userName: timelineData[i].user.screen_name,
             profilePic: timelineData[i].user.profile_image_url,
             text: timelineData[i].text,
-            timePosted: parseTwitterDate(timelineData[i].created_at),
+            timePosted: parseTwitterDate(timelineData[i].created_at, 'short'),
             retweetCount: timelineData[i].retweet_count,
             favouriteCount: timelineData[i].favorite_count
         };
@@ -98,6 +165,7 @@ const getFriendsData = T.get('https://api.twitter.com/1.1/friends/list.json?coun
     //save data
     friendData = data.users;
 });
+
 //when data has been retrieved store relevant data in friendsInfo object
 getFriendsData.done(() => {
     for (let i = 0; i < friendData.length; i += 1) {
@@ -114,34 +182,131 @@ getFriendsData.done(() => {
  * Direct messages functions
  ***************************************************************/
 
-//get 5 most recent direct messages from twitter api
-const getDMData = T.get('https://api.twitter.com/1.1/direct_messages.json?count=5', (err, data, res) => {
+//get 5 most recent direct messages RECEIVED from twitter api
+const getDmRecievedData = T.get('https://api.twitter.com/1.1/direct_messages.json?count=5', (err, data, res) => {
     //save data
-    DMData = data;
+    dmRecievedData = data;
 });
-//when data has been retrieved store relevant data in friendsInfo object
-getDMData.done(() => {
-    
-    if (DMData.errors) {
-        var error = new Error(DMData.errors.message);
+//when data has been retrieved store relevant data in DMRInfo object
+getDmRecievedData.done(() => {
+    //Display error messages
+    if (dmRecievedData.errors) {
+        var error = new Error(dmRecievedData.errors.message);
         console.error(error);
     }
-    for (let i = 0; i < DMData.length; i += 1) {
-        DMInfo[i] = {
-            text: DMData[i].text,
-            name: DMData[i].sender.name,
-            userName: DMData[i].sender.screen_name,
-            timePosted: parseTwitterDate(DMData[i].sender.created_at),
-            profilePic: DMData[i].sender.profile_image_url,
+    for (let i = 0; i < dmRecievedData.length; i += 1) {
+        // var getNewDM = new DM(dmRecievedData[i]);
+        // getNewDM.add();
+        DMRInfo[i] = {
+            text: dmRecievedData[i].text,
+            name: dmRecievedData[i].sender.name,
+            userName: dmRecievedData[i].sender.screen_name,
+            id: dmRecievedData[i].sender_id,
+            date: dmRecievedData[i].sender.created_at,
+            timePosted: parseTwitterDate(dmRecievedData[i].sender.created_at, 'long'),
+            profilePic: dmRecievedData[i].sender.profile_image_url,
+            recipient: dmRecievedData[i].recipient.id
         };
     }
+
+    //get 5 most recent direct messages RECEIVED from twitter api
+    const getDmSentData = T.get('https://api.twitter.com/1.1/direct_messages/sent.json?count=5', (err, data, res) => {
+        //save data
+        dmSentData = data;
+    });
+    //when data has been retrieved store relevant data in DMRInfo object
+    getDmSentData.done(() => {
+        //Display error messages
+        if (dmSentData.errors) {
+            var error = new Error(dmSentData.errors.message);
+            console.error(error);
+        }
+        for (let i = 0; i < dmSentData.length; i += 1) {
+            // var getNewDM = new DM(dmSentData[i]);
+            // getNewDM.add();
+            
+            DMSInfo[i] = {
+                text: dmSentData[i].text,
+                name: dmSentData[i].sender.name,
+                userName: dmSentData[i].sender.screen_name,
+                id: dmSentData[i].sender_id,
+                date: dmSentData[i].sender.created_at,
+                timePosted: parseTwitterDate(dmSentData[i].sender.created_at, 'long'),
+                profilePic: dmSentData[i].sender.profile_image_url,
+                recipient: dmSentData[i].recipient.id
+            };
+        }
+        //Put all DMR DMS into one array in date / time order
+        //push all items to array
+        const recievedDMs = Object.values(DMRInfo);
+        const sentDMs = Object.values(DMSInfo);
+        var dateOrderedDMs = Object.assign(recievedDMs);
+        for(let i = 0; i < sentDMs.length; i++) {
+            dateOrderedDMs.push(sentDMs[i]);
+        };
+        console.log(dateOrderedDMs);
+        // console.log(recievedDMs);
+        // console.log(sentDMs);
+        //sort into date / time order
+        (function(){
+            if (typeof Object.defineProperty === 'function'){
+              try{Object.defineProperty(Array.prototype,'sortBy',{value:sb}); }catch(e){}
+            }
+            if (!Array.prototype.sortBy) Array.prototype.sortBy = sb;
+          
+            function sb(f){
+              for (var i=this.length;i;){
+                var o = this[--i];
+                this[i] = [].concat(f.call(o,o,i),o);
+              }
+              this.sort(function(a,b){
+                for (var i=0,len=a.length;i<len;++i){
+                  if (a[i]!=b[i]) return a[i]<b[i]?-1:1;
+                }
+                return 0;
+              });
+              for (var i=this.length;i;){
+                this[--i]=this[i][this[i].length-1];
+              }
+              return this;
+            }
+          })();
+        //dateOrderedDMs.sortBy((o)=>{return new Date( o.date ) });
+
+
+        const conversations = [];
+        //function to create threads of conversatio
+        const createThreads = () => {
+            var firstRecipient = DMRInfo[1].recipient;
+            var sender = DMSInfo[1].id;
+            var firstConvo = DMRInfo[1];
+            var senderConvo = DMSInfo[1];
+            // If sender in dmR is equal to recipient in DMS
+
+
+            //loop check each DMS and DMI against first DM then plus 1
+            if (firstRecipient === sender) {
+                conversations
+                conversations.splice(0, 0, firstConvo, senderConvo);
+                console.log(conversations);
+            } else {
+                console.log(false);
+            }
+        };
+    });
+    //create new conversation object
+    //push dm to conversation in order of timePosted
+
 });
+
+
+
 
 
 
 
 router.get('/', (req, res) => {
-    res.render('index', { userInfo, tweetInfo, friendInfo, DMInfo });
+    res.render('index', { userInfo, tweetInfo, friendInfo, DMRInfo });
 });
 
 
