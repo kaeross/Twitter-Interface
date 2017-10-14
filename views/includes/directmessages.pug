@@ -4,29 +4,29 @@
                 li
                     h3
                         | Conversation with 
-                        a= DMInfo[0].name
+                        a= conversations[0][0].name
                     ul.app--message--conversation
-                        mixin appMessage(i)
+                        mixin appMessages(n)
                             mixin paras
-                                p.app--message--text= DMInfo[i].text
-                                p.app--message--timestamp= DMInfo[i].timePosted
-
-                            if DMInfo[i].id === userInfo.id
+                                p.app--message--text= conversations[0][n].text
+                                p.app--message--timestamp= conversations[0][n].timePosted
+                            if conversations[0][n].name === userInfo.username
                                 li.app--message--me
                                     .app--avatar(style=`background-image: url(${userInfo.profilePic})`)
                                         img(src= userInfo.profilePic)
                                     +paras
                             else
                                 li.app--message
-                                    .app--avatar(style=`background-image: url(${DMInfo[i].profilePic})`)
-                                        img(src= DMInfo[i].profilePic)
+                                    .app--avatar(style=`background-image: url(${conversations[0][n].profilePic})`)
+                                        img(src= conversations[0][n].profilePic)
                                     +paras
 
-                                
+                                    
 
-                        +appMessage(0)
-                        +appMessage(1)
-                        +appMessage(2)
-                        +appMessage(3)
-                        +appMessage(4)
+                        +appMessages(0)
+                        +appMessages(1)
+                        +appMessages(2)
+                        +appMessages(3)
+                        +appMessages(4)
+
                         
