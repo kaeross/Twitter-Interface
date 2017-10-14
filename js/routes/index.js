@@ -13,17 +13,6 @@ const moment = require('moment');
  * Global variables
  ***************************************************************/
 
-// let userData;
-// let timelineData;
-// let friendData;
-// let dmRecievedData;
-// let dmSentData;
-//let userInfo = {};
-// const tweetInfo = {};
-// const friendInfo = {};
-// const DMRInfo = [];
-// const DMSInfo = [];
-// const conversations = {};
 const T = new Twit(oAuth);
 
 /****************************************************************
@@ -98,10 +87,13 @@ const getUserInfo = (req, res, next) => {
         })
         .then(function (result) {
             let data = result.data;
-            req.userName = data.screen_name;
-            req.profileImage = data.profile_image_url;
-            req.friendsCount = data.friends_count;
-            req.profile_banner_url = data.profile_banner_url;
+            req.userInfo = {
+                userName : data.screen_name,
+                name : data.name,
+                profileImage : data.profile_image_url,
+                friendsCount : data.friends_count,
+                profile_banner_url : data.profile_banner_url
+            };
         });
 
     setTimeout(next, 1000);
@@ -112,27 +104,27 @@ const getUserInfo = (req, res, next) => {
  ***************************************************************/
 
 //Get home timeline and display 5 tweets
-// const getTimelineData = (res, req, next) => {
-//     T.get('https://api.twitter.com/1.1/statuses/home_timeline.json?count=5&exclude_replies')
-//         .catch(function (err) {
-//             console.log('caught error at getting timeline data', err.stack);
-//         })
-//         .then(function (result) {
-//             let timelineData = result.data;
-//             for (let i = 0; i < timelineData.length; i += 1) {
-//                 req.tweets[i] = {
-//                     name: timelineData[i].user.name,
-//                     userName: timelineData[i].user.screen_name,
-//                     profilePic: timelineData[i].user.profile_image_url,
-//                     text: timelineData[i].text,
-//                     timePosted: parseTwitterDate(timelineData[i].created_at, 'short'),
-//                     retweetCount: timelineData[i].retweet_count,
-//                     favouriteCount: timelineData[i].favorite_count
-//                 };
-//             }
-//         });
-//     setTimeout(next, 1000);
-// };
+const getTimelineData = (res, req, next) => {
+    T.get('https://api.twitter.com/1.1/statuses/home_timeline.json?count=5&exclude_replies')
+        .catch(function (err) {
+            console.log('caught error at getting timeline data', err.stack);
+        })
+        .then(function (result) {
+            let timelineData = result.data;
+            for (let i = 0; i < timelineData.length; i += 1) {
+                req.tweets[i] = {
+                    name: timelineData[i].user.name,
+                    userName: timelineData[i].user.screen_name,
+                    profilePic: timelineData[i].user.profile_image_url,
+                    text: timelineData[i].text,
+                    timePosted: parseTwitterDate(timelineData[i].created_at, 'short'),
+                    retweetCount: timelineData[i].retweet_count,
+                    favouriteCount: timelineData[i].favorite_count
+                };
+            }
+        });
+    setTimeout(next, 1000);
+};
 
 
 
@@ -313,8 +305,7 @@ router.use(getUserInfo);
 
 router.get('/', (req, res, next) => {
     res.render('index', {
-        userName: req.userName,
-        friendsCount: req.friendsCount,
+        userInfo: req.userInfo,
         timelineData: req.tweets
     });
 });
