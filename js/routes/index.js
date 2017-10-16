@@ -168,23 +168,21 @@ const getFriendsData = (res, req, next) => {
             throw err;
         } else {
             const friendData = data.users;
-            const tweets = {};
-            for (let i = 0; i < timelineData.length; i += 1) {
-                tweets[i] = {
-                    name: timelineData[i].user.name,
-                    userName: timelineData[i].user.screen_name,
-                    profilePic: timelineData[i].user.profile_image_url,
-                    text: timelineData[i].text,
-                    timePosted: parseTwitterDate(timelineData[i].created_at, 'short'),
-                    retweetCount: timelineData[i].retweet_count,
-                    favouriteCount: timelineData[i].favorite_count
+            const friends = {};
+            for (let i = 0; i < friendData.length; i += 1) {
+                friends[i] = {
+                    name: friendData[i].name,
+                    userName: friendData[i].screen_name,
+                    following: friendData[i].following,
+                    profilePic: friendData[i].profile_image_url,
                 };
             }
-            req.tweets = tweets;
+            req.friends = friends;
         }
     });
     setTimeout(next, 1000);
 };
+
 // //when data has been retrieved store relevant data in friendsInfo object
 // getFriendsData.done(() => {
 //     for (let i = 0; i < friendData.length; i += 1) {
@@ -197,9 +195,9 @@ const getFriendsData = (res, req, next) => {
 //     }
 // });
 
-// /****************************************************************
-//  * Direct messages functions
-//  ***************************************************************/
+/****************************************************************
+ * Direct messages functions
+ ***************************************************************/
 
 // //get 5 most recent direct messages RECEIVED from twitter api
 // const getDmRecievedData = T.get('https://api.twitter.com/1.1/direct_messages.json?count=5', (err, data, res) => {
