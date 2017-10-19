@@ -6,12 +6,12 @@
                         .circle--fluid
                             .circle--fluid--cell.circle--fluid--primary
                                 a.app--tweet--author
-                                    .app--avatar(style=`background-image: url(${friendInfo[index].profilePic})`)
-                                        img(src= friendInfo[index].profilePic)
-                                    h4= friendInfo[index].name
-                                    p= friendInfo[index].userName
+                                    .app--avatar(style=`background-image: url(${ifData.friendInfo[index].profilePic})`)
+                                        img(src= ifData.friendInfo[index].profilePic)
+                                    h4= ifData.friendInfo[index].name
+                                    p= ifData.friendInfo[index].userName
                             .circle--fluid--cell
-                            if friendInfo[index].following === true
+                            if ifData.friendInfo[index].following === true
                                 a.button.button-text Unfollow
                             else
                                 a.button Follow

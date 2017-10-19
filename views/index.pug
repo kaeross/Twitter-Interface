@@ -1,5 +1,5 @@
 include includes/header.pug
-//- include includes/tweetbar.pug
+include includes/tweetbar.pug
 
 .bounds.app--body
     .app--section--header
@@ -11,9 +11,9 @@ include includes/header.pug
                     h2= heading
         
         +appSectionHeader('Timeline')
-        +appSectionHeader('Following', userInfo.friendsCount)
-        +appSectionHeader('Direct Messages')  
+        +appSectionHeader('Following', ifData.userInfo.friendsCount)
+        +appSectionHeader('Direct Messages')
             
     //- include includes/timeline.pug
-    //- include includes/following.pug
+    include includes/following.pug
     //- include includes/directmessages.pug

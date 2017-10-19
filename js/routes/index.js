@@ -14,8 +14,10 @@ const moment = require('moment');
  ***************************************************************/
 
 const T = new Twit(oAuth);
-let userInfo = {};
-const tweets = {};
+const ifData = {};
+    ifData.userInfo = {};
+    ifData.tweets = [];
+    ifData.friendInfo = [];
 
 /****************************************************************
  * General functions
@@ -89,9 +91,9 @@ const getUserInfo = (req, res, next) => {
             console.log('Could not verify credentials', err.stack);
             next(err);
         })
-        .then(function (res) {
-            let data = res.data;
-            userInfo = {
+        .then(function (response) {
+            let data = response.data;
+            ifData.userInfo = {
                 userName: data.screen_name,
                 name: data.name,
                 profileImage: data.profile_image_url,
@@ -114,10 +116,10 @@ const getTimelineData = (res, req, next) => {
             console.log('Could not retrieve friend data', err.stack);
             next(err);
         })
-        .then(function (res) {
-            const timelineData = res.data;
+        .then(function(response) {
+            const timelineData = response.data;
             for (let i = 0; i < timelineData.length; i += 1) {
-                tweets[i] = {
+                const tweet = {
                     name: timelineData[i].user.name,
                     userName: timelineData[i].user.screen_name,
                     profilePic: timelineData[i].user.profile_image_url,
@@ -126,21 +128,43 @@ const getTimelineData = (res, req, next) => {
                     retweetCount: timelineData[i].retweet_count,
                     favouriteCount: timelineData[i].favorite_count
                 };
+                ifData.tweets.push(tweet);
             }
         });
     setTimeout(next, 1000);
 };
 
+/****************************************************************
+ * Following functions
+ ***************************************************************/
 
-router.use(getUserInfo, getTimelineData);
+//get 5 items from following / friends list from twitter api
+const getFriendsData = (res, req, next) => {
+    T.get('https://api.twitter.com/1.1/friends/list.json?count=5')
+        .catch(function (err) {
+            console.log('There was a problem retrieving friend data', err.stack);
+            next(err);
+        })
+        .then(function (response) {
+            const friendData = response.data.users;
+            for (let i = 0; i < friendData.length; i += 1) {
+                const friend = {
+                    name: friendData[i].name,
+                    userName: friendData[i].screen_name,
+                    following: friendData[i].following,
+                    profilePic: friendData[i].profile_image_url,
+                };
+                ifData.friendInfo.push(friend);
+            }
+        });
+    setTimeout(next, 1000);
+};
+
+router.use(getUserInfo, getTimelineData, getFriendsData);
 
 router.get('/', (req, res) => {
-    console.log(userInfo);
-    console.log(tweets);
-    res.render('index', {
-        userInfo
-        //tweets: req.tweets
-    });
+    console.log(ifData);
+    res.render('index', { ifData });
 });
 
 
