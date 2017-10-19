@@ -15,6 +15,7 @@ const moment = require('moment');
 
 const T = new Twit(oAuth);
 let userInfo = {};
+const tweets = {};
 
 /****************************************************************
  * General functions
@@ -107,13 +108,35 @@ const getUserInfo = (req, res, next) => {
  * Timeline functions
  ***************************************************************/
 
- 
+const getTimelineData = (res, req, next) => {
+    T.get('https://api.twitter.com/1.1/statuses/home_timeline.json?count=5&exclude_replies')
+        .catch(function (err) {
+            console.log('Could not retrieve friend data', err.stack);
+            next(err);
+        })
+        .then(function (res) {
+            const timelineData = res.data;
+            for (let i = 0; i < timelineData.length; i += 1) {
+                tweets[i] = {
+                    name: timelineData[i].user.name,
+                    userName: timelineData[i].user.screen_name,
+                    profilePic: timelineData[i].user.profile_image_url,
+                    text: timelineData[i].text,
+                    timePosted: parseTwitterDate(timelineData[i].created_at, 'short'),
+                    retweetCount: timelineData[i].retweet_count,
+                    favouriteCount: timelineData[i].favorite_count
+                };
+            }
+        });
+    setTimeout(next, 1000);
+};
 
 
-router.use(getUserInfo);
+router.use(getUserInfo, getTimelineData);
 
 router.get('/', (req, res) => {
     console.log(userInfo);
+    console.log(tweets);
     res.render('index', {
         userInfo
         //tweets: req.tweets

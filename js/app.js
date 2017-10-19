@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ 'extended': false }));
 
 app.use('/static', express.static('public'));
 
-app.use('/', mainRoutes);
+app.use(mainRoutes);
 
 app.set('view engine', 'pug');
 
