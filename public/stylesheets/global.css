@@ -2430,7 +2430,8 @@ a:hover .app--avatar {
 }
 /* line 225, ../sass/global.sass */
 .app--message--conversation {
-  margin: 0;
+  margin: 1em;
+  border-bottom: 1px solid #e1e1e1;
 }
 /* line 228, ../sass/global.sass */
 .app--message--text {

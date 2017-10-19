@@ -2,31 +2,25 @@
         .app--section
             ul.app--message--list
                 li
-                    h3
-                        | Conversation with 
-                        a= conversations[0][0].name
-                    ul.app--message--conversation
-                        mixin appMessages(n)
-                            mixin paras
-                                p.app--message--text= conversations[0][n].text
-                                p.app--message--timestamp= conversations[0][n].timePosted
-                            if conversations[0][n].name === userInfo.username
-                                li.app--message--me
-                                    .app--avatar(style=`background-image: url(${userInfo.profilePic})`)
-                                        img(src= userInfo.profilePic)
-                                    +paras
-                            else
-                                li.app--message
-                                    .app--avatar(style=`background-image: url(${conversations[0][n].profilePic})`)
-                                        img(src= conversations[0][n].profilePic)
-                                    +paras
-
-                                    
-
-                        +appMessages(0)
-                        +appMessages(1)
-                        +appMessages(2)
-                        +appMessages(3)
-                        +appMessages(4)
-
-                        
+                    each conversation in ifData.conversations
+                        h3
+                            | Conversation with 
+                            - for(var i = 0; i < conversation.length; i++)
+                                if conversation[i].name != ifData.userInfo.name
+                                    a= conversation[i].name
+                                    - break;    
+                        ul.app--message--conversation
+                            each obj in conversation
+                                mixin paras
+                                    p.app--message--text= obj.text
+                                    p.app--message--timestamp= obj.timePosted
+                                if obj.name === ifData.userInfo.name
+                                        li.app--message--me
+                                            .app--avatar(style=`background-image: url(${ifData.userInfo.profileImage})`)
+                                                img(src= ifData.userInfo.profileImage)
+                                            +paras
+                                else
+                                    li.app--message
+                                        .app--avatar(style=`background-image: url(${obj.profilePic})`)
+                                            img(src= obj.profilePic)
+                                        +paras
