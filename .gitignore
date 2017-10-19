@@ -1,8 +1,10 @@
 .DS_Store
 .sass-cache
 
+
 #ignore directories
 /node_modules/
+js/routes/oldIndex.js
 
 #ignore files
 config.js

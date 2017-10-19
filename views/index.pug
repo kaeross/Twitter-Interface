@@ -10,10 +10,10 @@ include includes/header.pug
                     strong= number
                     h2= heading
         
-        //+appSectionHeader('Timeline')
+        +appSectionHeader('Timeline')
         +appSectionHeader('Following', userInfo.friendsCount)
         +appSectionHeader('Direct Messages')  
             
-    - include includes/timeline.pug
+    //- include includes/timeline.pug
     //- include includes/following.pug
     //- include includes/directmessages.pug

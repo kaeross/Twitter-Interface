@@ -12,7 +12,7 @@ const mainRoutes = require('../js/routes/index.js');
  * Middleware
  *****************************************************/
 
-app.use(bodyParser.urlencoded({'extended': false}));
+app.use(bodyParser.urlencoded({ 'extended': false }));
 
 app.use('/static', express.static('public'));
 
@@ -28,20 +28,19 @@ app.use((req, res, next) => {
 	let err = new Error("Page Not Found");
 	err.status = 404;
 	next(err);
-  });
-  
-  app.use((req, res, next) => {
+});
+
+app.use((req, res, next) => {
 	let err = new Error("Internal Server Error");
 	err.status = 500;
 	next(err);
-  });
-  
-  app.use((err, req, res, next) => {
-	res.locals.error = err;
+});
+
+app.use((err, req, res, next) => {
 	res.status(err.status);
-	res.render('error');
-  });
-  
+	res.render('error', { error: err });
+});
+
 
 app.listen(port, () => {
 	console.log(`The application is running on ${port}`);
