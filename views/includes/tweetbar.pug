@@ -2,8 +2,8 @@
     form
         .circle--fluid
         .circle--fluid--cell.circle--fluid--primary.align-bottom.app--tweet--post
-            .app--avatar(style=`background-image: url(${ifData.userInfo.profilePic})`)
-                img(src= `${ifData.userInfo.profilePic}`)
+            .app--avatar(style=`background-image: url(${ifData.userInfo.profileImage})`)
+                img(src= `${ifData.userInfo.profileImage}`)
             textarea#tweet-textarea.circle--textarea--input(placeholder="What's happening?")
             strong#tweet-char.app--tweet--char 140
         .circle--fluid--cell.align-bottom
