@@ -1,24 +1,18 @@
 .grid-33
         .app--section
             ul.app--user--list
-                mixin appUserList(index)
+                each friend in ifData.friendInfo
                     li
                         .circle--fluid
                             .circle--fluid--cell.circle--fluid--primary
                                 a.app--tweet--author
-                                    .app--avatar(style=`background-image: url(${ifData.friendInfo[index].profilePic})`)
-                                        img(src= ifData.friendInfo[index].profilePic)
-                                    h4= ifData.friendInfo[index].name
-                                    p= ifData.friendInfo[index].userName
+                                    .app--avatar(style=`background-image: url(${friend.profilePic})`)
+                                        img(src= friend.profilePic)
+                                    h4= friend.name
+                                    p= friend.userName
                             .circle--fluid--cell
-                            if ifData.friendInfo[index].following === true
-                                a.button.button-text Unfollow
-                            else
-                                a.button Follow
-                
-                +appUserList(0)
-                +appUserList(1)
-                +appUserList(2)
-                +appUserList(3)
-                +appUserList(4)
+                                if friend.following === true
+                                    a.button.button-text Unfollow
+                                else
+                                    a.button Follow
                 

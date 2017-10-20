@@ -1,21 +1,22 @@
-include includes/header.pug
-include includes/tweetbar.pug
+extends layout.pug
 
-.bounds.app--body
-    .app--section--header
+block main
+    include includes/header.pug
+    include includes/tweetbar.pug
 
-        mixin appSectionHeader(heading, number)
-            .grid-33
-                .app--section--heading
-                    strong= number
-                    h2= heading
-        
-        +appSectionHeader('Timeline')
-        +appSectionHeader('Following', ifData.userInfo.friendsCount)
-        +appSectionHeader('Direct Messages')
+    .bounds.app--body
+        .app--section--header
+
+            mixin appSectionHeader(heading, number)
+                .grid-33
+                    .app--section--heading
+                        strong= number
+                        h2= heading
             
-    include includes/timeline.pug
-    include includes/following.pug
-    include includes/directmessages.pug
-
-script(src="/socket.io/socket.io.js")
+            +appSectionHeader('Timeline')
+            +appSectionHeader('Following', ifData.userInfo.friendsCount)
+            +appSectionHeader('Direct Messages')
+                
+        include includes/timeline.pug
+        include includes/following.pug
+        include includes/directmessages.pug
