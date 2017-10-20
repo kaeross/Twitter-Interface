@@ -147,7 +147,7 @@ const getTimelineData = (req, res, next) => {
 const getFriendsData = (req, res, next) => {
     T.get('https://api.twitter.com/1.1/friends/list.json?count=5')
         .catch(function (err) {
-            q.log('There was a problem retrieving friend data', err.stack);
+            console.log('There was a problem retrieving friend data', err.stack);
             next(err);
         })
         .then(function (response) {
@@ -299,7 +299,6 @@ router.use(getUserInfo, getTimelineData, getFriendsData, getDmRecievedData, getD
 
 router.get('/', (req, res) => {
     console.log(ifData);
-    console.log(ifData.conversations[0][0]);
     res.render('index', { ifData });
 });
 
