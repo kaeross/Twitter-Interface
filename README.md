@@ -30,3 +30,7 @@ npm install
 ```
 npm start
 ``` 
+
+## Authors
+
+* **Kate Ross** - *Initial work* - [Kaeross](https://github.com/kaeross)
