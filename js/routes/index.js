@@ -14,11 +14,6 @@ const moment = require('moment');
  ***************************************************************/
 
 const T = new Twit(oAuth);
-const ifData = {};
-ifData.userInfo = {};
-ifData.tweets = [];
-ifData.friendInfo = [];
-ifData.conversations = [];
 
 /****************************************************************
  * General functions
@@ -85,6 +80,8 @@ function parseTwitterDate(tDate, shortOrLong) {
  ***************************************************************/
 
 
+
+
 // Get user information and verify oAuth credentials
 const getUserInfo = (req, res, next) => {
     T.get('https://api.twitter.com/1.1/account/verify_credentials.json')
@@ -94,7 +91,9 @@ const getUserInfo = (req, res, next) => {
         })
         .then(function (response) {
             let data = response.data;
-            ifData.userInfo = {
+            //create interface data object
+            res.locals.ifData = {};
+            res.locals.ifData.userInfo = {
                 userName: data.screen_name,
                 name: data.name,
                 profileImage: data.profile_image_url,
@@ -118,6 +117,7 @@ const getTimelineData = (req, res, next) => {
             next(err);
         })
         .then(function (response) {
+            const tweets = [];
             const timelineData = response.data;
             if (timelineData.errors) {
                 var error = new Error(timelineData.errors.message);
@@ -133,7 +133,8 @@ const getTimelineData = (req, res, next) => {
                     retweetCount: timelineData[i].retweet_count,
                     favouriteCount: timelineData[i].favorite_count
                 };
-                ifData.tweets.push(tweet);
+                tweets.push(tweet);
+                res.locals.ifData.tweets = tweets;
             }
         });
     setTimeout(next, 1000);
@@ -151,6 +152,7 @@ const getFriendsData = (req, res, next) => {
             next(err);
         })
         .then(function (response) {
+            const friendInfo = [];
             const friendData = response.data.users;
             if (friendData.errors) {
                 var error = new Error(friendData.errors.message);
@@ -163,7 +165,8 @@ const getFriendsData = (req, res, next) => {
                     following: friendData[i].following,
                     profilePic: friendData[i].profile_image_url,
                 };
-                ifData.friendInfo.push(friend);
+                friendInfo.push(friend);
+                res.locals.ifData.friendInfo = friendInfo;
             }
         });
     setTimeout(next, 1000);
@@ -234,6 +237,7 @@ const getDmSentData = (req, res, next) => {
 };
 
 const organiseDMs = (req, res, next) => {
+    const conversations = [];
     //Put all direct messages into one array in date / time order
     //push all items to array
     let concatDMs = [];
@@ -277,7 +281,7 @@ const organiseDMs = (req, res, next) => {
                     if (compareA === compareB) {
                         conversation.push(dmB); //add matching DM to array
                     } else {
-                        ifData.conversations.splice(arrayIndex, 0, conversation); //push array to conversations array
+                        conversations.splice(arrayIndex, 0, conversation); //push array to conversations array
                         arrayIndex += 1; //next
                         conversation = []; //clear array
                         conversation.push(dmB); //start array with non matching DM
@@ -287,10 +291,11 @@ const organiseDMs = (req, res, next) => {
                 }
             })();
             //push last conversation array into conversations array
-            ifData.conversations.splice(1, 0, conversation);
+            conversations.splice(1, 0, conversation);
             arrayIndex += 1;
-        } return ifData.conversations;
+        }
     })(); //end sortConvos
+    res.locals.ifData.conversations = conversations;
     setTimeout(next, 1000);
 };
 
@@ -298,6 +303,7 @@ const organiseDMs = (req, res, next) => {
 router.use(getUserInfo, getTimelineData, getFriendsData, getDmRecievedData, getDmSentData, organiseDMs);
 
 router.get('/', (req, res) => {
+    const ifData = res.locals.ifData;
     console.log(ifData);
     res.render('index', { ifData });
 });
