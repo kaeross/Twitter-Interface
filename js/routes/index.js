@@ -79,9 +79,6 @@ function parseTwitterDate(tDate, shortOrLong) {
  * Router
  ***************************************************************/
 
-
-
-
 // Get user information and verify oAuth credentials
 const getUserInfo = (req, res, next) => {
     T.get('https://api.twitter.com/1.1/account/verify_credentials.json')
@@ -298,7 +295,6 @@ const organiseDMs = (req, res, next) => {
     res.locals.ifData.conversations = conversations;
     setTimeout(next, 1000);
 };
-
 
 router.use(getUserInfo, getTimelineData, getFriendsData, getDmRecievedData, getDmSentData, organiseDMs);
 

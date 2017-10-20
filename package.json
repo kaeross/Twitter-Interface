@@ -2,7 +2,7 @@
   "name": "twitter-interface",
   "version": "1.0.0",
   "description": "",
-  "main": "js/app.js",
+  "main": "app.js",
   "scripts": {
     "test": "test",
     "start": "nodemon"
@@ -19,7 +19,6 @@
   "homepage": "https://github.com/kaeross/Twitter-Interface#readme",
   "devDependencies": {
     "body-parser": "^1.18.1",
-    "cookie-parser": "^1.4.3",
     "express": "^4.15.4",
     "moment": "^2.18.1",
     "pug": "^2.0.0-rc.4",

@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 8000;
 //routes module
-const mainRoutes = require('../js/routes/index.js');
+const mainRoutes = require('./js/routes/index.js');
 
 /*****************************************************
  * Middleware
