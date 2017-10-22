@@ -1,8 +1,11 @@
 extends layout.pug
 
 block main
+    include includes/header.pug
     .bounds.app--body
         .app--section--header
-            h3= error.message
-            p= error.status
+            .error 
+                h3= error.message
+                p= error.status
+                p= error.stack
             
