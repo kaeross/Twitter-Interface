@@ -39,7 +39,7 @@ function parseTwitterDate(tDate, shortOrLong) {
         if (shortOrLong === 'long') {
             return interval + ' months ago';
         } else {
-            return interval + 'm';
+            return interval + ' mth';
         }
     }
     interval = Math.floor(seconds / 86400);
@@ -93,6 +93,7 @@ const getUserInfo = (req, res, next) => {
             res.locals.ifData.userInfo = {
                 userName: data.screen_name,
                 name: data.name,
+                id: data.id,
                 profileImage: data.profile_image_url,
                 friendsCount: data.friends_count,
                 profile_banner_url: data.profile_banner_url
@@ -108,14 +109,15 @@ const getUserInfo = (req, res, next) => {
  ***************************************************************/
 
 const getTimelineData = (req, res, next) => {
-    T.get('https://api.twitter.com/1.1/statuses/home_timeline.json?count=5&exclude_replies')
+    T.get('https://api.twitter.com/1.1/statuses/user_timeline.json?count=5')
         .catch(function (err) {
-            console.log('Could not retrieve friend data', err.stack);
+            console.log('Could not retrieve tweets', err.stack);
             next(err);
         })
         .then(function (response) {
             const tweets = [];
             const timelineData = response.data;
+            res.locals.timelineData = response.data;
             if (timelineData.errors) {
                 var error = new Error(timelineData.errors.message);
                 console.error(error);
@@ -151,7 +153,7 @@ const getFriendsData = (req, res, next) => {
         .then(function (response) {
             const friendInfo = [];
             const friendData = response.data.users;
-            if (friendData.errors) {
+            if (friendData != 'undefined' && friendData.errors) {
                 var error = new Error(friendData.errors.message);
                 console.error(error);
             }

@@ -1,5 +1,8 @@
-.bounds.app--body
-    .app--section--header
-        h3= error
-        p= status
-        
+extends layout.pug
+
+block main
+    .bounds.app--body
+        .app--section--header
+            h3= error.message
+            p= error.status
+            

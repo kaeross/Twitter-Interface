@@ -25,13 +25,13 @@ app.set('view engine', 'pug');
  *****************************************************/
 
 app.use((req, res, next) => {
-	let err = new Error("Page Not Found");
+	let err = new Error('Page Not Found');
 	err.status = 404;
 	next(err);
 });
 
 app.use((req, res, next) => {
-	let err = new Error("Internal Server Error");
+	let err = new Error('Internal Server Error');
 	err.status = 500;
 	next(err);
 });
