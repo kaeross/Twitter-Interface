@@ -24,22 +24,23 @@ app.set('view engine', 'pug');
  * Errors
  *****************************************************/
 
-//Can't get them to work... 
-
 app.use((req, res, next) => {
-	let err = new Error('Page Not Found');
+	let err = new Error('Page Not Found...');
 	err.status = 404;
+	res.locals.error = err;
 	next(err);
 });
 
 app.use((req, res, next) => {
 	let err = new Error('Internal Server Error');
 	err.status = 500;
+	res.locals.error = err;
 	next(err);
 });
 
 app.use((err, req, res, next) => {
 	res.status(err.status);
+	res.locals.error = err;
 	res.render('error', { error: err });
 });
 
