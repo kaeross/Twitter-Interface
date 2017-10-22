@@ -24,6 +24,8 @@ app.set('view engine', 'pug');
  * Errors
  *****************************************************/
 
+//Can't get them to work... 
+
 app.use((req, res, next) => {
 	let err = new Error('Page Not Found');
 	err.status = 404;
