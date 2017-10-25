@@ -306,5 +306,4 @@ router.get('/', (req, res) => {
     res.render('index', { ifData });
 });
 
-
 module.exports = router;
